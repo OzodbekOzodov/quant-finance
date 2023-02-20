@@ -33,11 +33,13 @@ def plot_time_series(time, value, title=''):
     plt.plot(time, value)
     plt.xlabel('Time')
     plt.ylabel('Value')
-    plt.title()
+    plt.title(title)
     plt.show()
 
 
 import numpy as np
+import pandas as pd
+
 def time_series_summary(time_series):
     """
     Calculates summary statistics for a time series.
@@ -48,17 +50,15 @@ def time_series_summary(time_series):
     Returns:
     dict: A dictionary with summary statistics.
     """
-    stats = {}
-    stats['count'] = len(time_series)
-    stats['mean'] = np.mean(time_series)
-    stats['std'] = np.std(time_series)
-    stats['min'] = np.min(time_series)
-    stats['25%'] = np.percentile(time_series, 25)
-    stats['50%'] = np.percentile(time_series, 50)
-    stats['75%'] = np.percentile(time_series, 75)
-    stats['max'] = np.max(time_series)
-    stats['skewness'] = np.skew(time_series)
-    stats['kurtosis'] = np.kurtosis(time_series)
-
+    stats = pd.DataFrame({
+        'count': len(time_series),
+        'mean': np.mean(time_series),
+        'std': np.std(time_series),
+        'min': np.min(time_series),
+        '25%': np.percentile(time_series, 25),
+        '50%': np.percentile(time_series, 50),
+        '75%': np.percentile(time_series, 75),
+        'max': np.max(time_series)
+    }, index=[0])
+    
     return stats
-
