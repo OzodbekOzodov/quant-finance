@@ -1,19 +1,5 @@
 
-import statsmodels.api as sm
-
-def check_stationarity(data):
-    """
-    Checks for stationarity of a time series using the Augmented Dickey-Fuller (ADF) test.
-    Returns a boolean value indicating whether the data is stationary.
-    """
-    adf_result = sm.tsa.stattools.adfuller(data)
-    p_value = adf_result[1]
-    is_stationary = p_value < 0.05
-    return is_stationary
-
-
 import matplotlib.pyplot as plt
-
 
 
 def plot_time_series(time, value, title=''):
@@ -62,3 +48,27 @@ def time_series_summary(time_series):
     }, index=[0])
     
     return stats
+
+
+import statsmodels.api as sm
+
+def check_stationarity(data, varname=''):
+    """
+    Checks for stationarity of a time series using the Augmented Dickey-Fuller (ADF) test.
+    Returns a string explaining the results of the test.
+
+    Args:
+    data (pandas.DataFrame): A dataframe containing a time series.
+
+    Returns:
+    str: A string explaining the results of the ADF test.
+    """
+    adf_result = sm.tsa.stattools.adfuller(data[varname])
+    p_value = adf_result[1]
+    is_stationary = p_value < 0.05
+    result = f"ADF test p-value: {p_value:.4f}\n"
+    if is_stationary:
+        result += "The null hypothesis of the ADF test (that the time series is non-stationary) is rejected at the 5% level, indicating that the data is stationary."
+    else:
+        result += "The null hypothesis of the ADF test (that the time series is non-stationary) cannot be rejected at the 5% level, indicating that the data is non-stationary."
+    return result
