@@ -72,3 +72,34 @@ def check_stationarity(data, varname=''):
     else:
         result += "The null hypothesis of the ADF test (that the time series is non-stationary) cannot be rejected at the 5% level, indicating that the data is non-stationary."
     return result
+
+
+
+import pandas as pd
+import yfinance as yf
+from statsmodels.tsa.seasonal import seasonal_decompose
+
+def deseasonalize_data(data):
+    """
+    Deseasonalizes time series data using seasonal decomposition.
+
+    Args:
+    data (DataFrame): A pandas DataFrame with a "date" column and at least one time series column.
+
+    Returns:
+    A pandas DataFrame with deseasonalized time series data.
+    """
+    # Create a copy of the data to avoid modifying the original DataFrame
+    data_copy = data.copy()
+
+    # Set the date column as the index
+    data_copy.set_index("date", inplace=True)
+
+    # Perform seasonal decomposition on the "close" column
+    decomposition = seasonal_decompose(data_copy["close"], model="multiplicative", period=252)
+
+    # Subtract the seasonal component from the original data
+    data_copy["deseasonalized"] = data_copy["close"] / decomposition.seasonal
+
+    # Reset the index and return the deseasonalized data
+    return data_copy.reset_index()[["date", "deseasonalized"]]
